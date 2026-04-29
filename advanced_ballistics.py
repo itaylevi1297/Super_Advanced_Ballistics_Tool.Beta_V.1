@@ -1708,7 +1708,29 @@ def reverse_solve_target(
     target_lateral_m: float,
 ) -> ReverseSolution:
     if target_forward_m <= 0.0:
-        return ReverseSolution(False, 0, target_forward_m, target_height_m, target_lateral_m, launch.elevation_deg, launch.azimuth_deg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "Target distance must be positive.")
+        return ReverseSolution(
+            solved=False,
+            iterations=0,
+            target_forward_m=target_forward_m,
+            target_height_m=target_height_m,
+            target_lateral_m=target_lateral_m,
+            solved_elevation_deg=launch.elevation_deg,
+            solved_azimuth_deg=launch.azimuth_deg,
+            elevation_adjustment_moa=0.0,
+            elevation_adjustment_mils=0.0,
+            windage_adjustment_moa=0.0,
+            windage_adjustment_mils=0.0,
+            elevation_clicks=0.0,
+            windage_clicks=0.0,
+            final_vertical_error_m=0.0,
+            final_lateral_error_m=0.0,
+            target_time_s=0.0,
+            target_speed_mps=0.0,
+            target_mach=0.0,
+            target_energy_j=0.0,
+            target_drop_from_muzzle_m=0.0,
+            message="Target distance must be positive.",
+        )
 
     reference_azimuth = launch.azimuth_deg
     initial_elevation_guess = math.degrees(math.atan2(target_height_m - launch.muzzle_height_m, target_forward_m))
@@ -1731,9 +1753,27 @@ def reverse_solve_target(
         base_sample = simulate_sample_point(projectile, env, base_launch, config, target_forward_m, reference_azimuth)
         if base_sample is None:
             return ReverseSolution(
-                False, iteration, target_forward_m, target_height_m, target_lateral_m,
-                current_elevation, current_azimuth, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                "Solver could not reach the requested target distance. Increase max time or reduce target distance."
+                solved=False,
+                iterations=iteration,
+                target_forward_m=target_forward_m,
+                target_height_m=target_height_m,
+                target_lateral_m=target_lateral_m,
+                solved_elevation_deg=current_elevation,
+                solved_azimuth_deg=current_azimuth,
+                elevation_adjustment_moa=0.0,
+                elevation_adjustment_mils=0.0,
+                windage_adjustment_moa=0.0,
+                windage_adjustment_mils=0.0,
+                elevation_clicks=0.0,
+                windage_clicks=0.0,
+                final_vertical_error_m=0.0,
+                final_lateral_error_m=0.0,
+                target_time_s=0.0,
+                target_speed_mps=0.0,
+                target_mach=0.0,
+                target_energy_j=0.0,
+                target_drop_from_muzzle_m=0.0,
+                message="Solver could not reach the requested target distance. Increase max time or reduce target distance.",
             )
 
         lateral_error = base_sample.x_m - target_lateral_m
@@ -1763,11 +1803,27 @@ def reverse_solve_target(
 
         if elev_sample is None or az_sample is None:
             return ReverseSolution(
-                False, iteration, target_forward_m, target_height_m, target_lateral_m,
-                current_elevation, current_azimuth, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                0.0, 0.0, 0.0, 0.0, 0.0,
-                lateral_error, vertical_error,
-                "Solver could not compute the Jacobian near the target solution."
+                solved=False,
+                iterations=iteration,
+                target_forward_m=target_forward_m,
+                target_height_m=target_height_m,
+                target_lateral_m=target_lateral_m,
+                solved_elevation_deg=current_elevation,
+                solved_azimuth_deg=current_azimuth,
+                elevation_adjustment_moa=0.0,
+                elevation_adjustment_mils=0.0,
+                windage_adjustment_moa=0.0,
+                windage_adjustment_mils=0.0,
+                elevation_clicks=0.0,
+                windage_clicks=0.0,
+                final_vertical_error_m=vertical_error,
+                final_lateral_error_m=lateral_error,
+                target_time_s=0.0,
+                target_speed_mps=0.0,
+                target_mach=0.0,
+                target_energy_j=0.0,
+                target_drop_from_muzzle_m=0.0,
+                message="Solver could not compute the Jacobian near the target solution.",
             )
 
         d_lat_delev = (elev_sample.x_m - base_sample.x_m) / perturb_deg
@@ -1785,11 +1841,27 @@ def reverse_solve_target(
         )
         if delta is None:
             return ReverseSolution(
-                False, iteration, target_forward_m, target_height_m, target_lateral_m,
-                current_elevation, current_azimuth, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                0.0, 0.0, 0.0, 0.0, 0.0,
-                lateral_error, vertical_error,
-                "Solver Jacobian became singular. Try a different initial guess."
+                solved=False,
+                iterations=iteration,
+                target_forward_m=target_forward_m,
+                target_height_m=target_height_m,
+                target_lateral_m=target_lateral_m,
+                solved_elevation_deg=current_elevation,
+                solved_azimuth_deg=current_azimuth,
+                elevation_adjustment_moa=0.0,
+                elevation_adjustment_mils=0.0,
+                windage_adjustment_moa=0.0,
+                windage_adjustment_mils=0.0,
+                elevation_clicks=0.0,
+                windage_clicks=0.0,
+                final_vertical_error_m=vertical_error,
+                final_lateral_error_m=lateral_error,
+                target_time_s=0.0,
+                target_speed_mps=0.0,
+                target_mach=0.0,
+                target_energy_j=0.0,
+                target_drop_from_muzzle_m=0.0,
+                message="Solver Jacobian became singular. Try a different initial guess.",
             )
 
         delta_elevation_deg, delta_azimuth_deg = delta
@@ -1797,11 +1869,27 @@ def reverse_solve_target(
         current_azimuth += clamp(delta_azimuth_deg, -5.0, 5.0)
     if abs(last_lateral_error) >= 0.01 or abs(last_vertical_error) >= 0.01:
         return ReverseSolution(
-            False, max_iterations, target_forward_m, target_height_m, target_lateral_m,
-            current_elevation, current_azimuth, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.0, 0.0,
-            last_lateral_error, last_vertical_error,
-            "Solver did not converge within the iteration limit."
+            solved=False,
+            iterations=max_iterations,
+            target_forward_m=target_forward_m,
+            target_height_m=target_height_m,
+            target_lateral_m=target_lateral_m,
+            solved_elevation_deg=current_elevation,
+            solved_azimuth_deg=current_azimuth,
+            elevation_adjustment_moa=0.0,
+            elevation_adjustment_mils=0.0,
+            windage_adjustment_moa=0.0,
+            windage_adjustment_mils=0.0,
+            elevation_clicks=0.0,
+            windage_clicks=0.0,
+            final_vertical_error_m=last_vertical_error,
+            final_lateral_error_m=last_lateral_error,
+            target_time_s=0.0,
+            target_speed_mps=0.0,
+            target_mach=0.0,
+            target_energy_j=0.0,
+            target_drop_from_muzzle_m=0.0,
+            message="Solver did not converge within the iteration limit.",
         )
 
     zero_elevation_deg = solve_zero_elevation(projectile, env, launch, rifle, config)
@@ -1831,10 +1919,27 @@ def reverse_solve_target(
     )
     if final_sample is None:
         return ReverseSolution(
-            False, iteration, target_forward_m, target_height_m, target_lateral_m,
-            current_elevation, current_azimuth, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-            last_vertical_error, last_lateral_error, 0.0, 0.0, 0.0, 0.0,
-            "Solver converged mathematically but failed to recover the final target sample."
+            solved=False,
+            iterations=iteration,
+            target_forward_m=target_forward_m,
+            target_height_m=target_height_m,
+            target_lateral_m=target_lateral_m,
+            solved_elevation_deg=current_elevation,
+            solved_azimuth_deg=current_azimuth,
+            elevation_adjustment_moa=0.0,
+            elevation_adjustment_mils=0.0,
+            windage_adjustment_moa=0.0,
+            windage_adjustment_mils=0.0,
+            elevation_clicks=0.0,
+            windage_clicks=0.0,
+            final_vertical_error_m=last_vertical_error,
+            final_lateral_error_m=last_lateral_error,
+            target_time_s=0.0,
+            target_speed_mps=0.0,
+            target_mach=0.0,
+            target_energy_j=0.0,
+            target_drop_from_muzzle_m=0.0,
+            message="Solver converged mathematically but failed to recover the final target sample.",
         )
 
     return ReverseSolution(
@@ -2322,6 +2427,16 @@ def build_3d_animation_html(
     const minHeight = Math.min(0, ...samples.map(s => s.y), target.enabled ? target.y : 0);
     const maxLateral = Math.max(...samples.map(s => Math.abs(s.x)), target.enabled ? Math.abs(target.x) : 0, 1);
 
+    function chooseGridStep(maxRange) {{
+      const preferred = [25, 50, 100, 200, 250, 500, 1000];
+      for (const step of preferred) {{
+        if (maxRange / step <= 12) {{
+          return step;
+        }}
+      }}
+      return 1000;
+    }}
+
     function interpolateSample(time) {{
       if (time <= samples[0].t) return samples[0];
       if (time >= samples[samples.length - 1].t) return samples[samples.length - 1];
@@ -2399,8 +2514,10 @@ def build_3d_animation_html(
       ctx.lineWidth = 1;
       ctx.fillStyle = 'rgba(210,225,238,0.72)';
       ctx.font = '12px Consolas, monospace';
-      for (let i = 0; i <= 6; i += 1) {{
-        const z = maxForward * (i / 6);
+      const gridStep = chooseGridStep(maxForward);
+      const gridCount = Math.max(1, Math.ceil(maxForward / gridStep));
+      for (let i = 0; i <= gridCount; i += 1) {{
+        const z = Math.min(i * gridStep, maxForward);
         const a = project({{x: -maxLateral, y: 0, z}}, view, transform);
         const b = project({{x: maxLateral, y: 0, z}}, view, transform);
         ctx.beginPath();
@@ -2439,14 +2556,14 @@ def build_3d_animation_html(
       const shooter = project({{x: 0, y: 0, z: 0}}, view, transform);
       ctx.fillStyle = '#4ade80';
       ctx.beginPath();
-      ctx.arc(shooter.x, shooter.y, 8, 0, Math.PI * 2);
+      ctx.arc(shooter.x, shooter.y, 10, 0, Math.PI * 2);
       ctx.fill();
 
       if (target.enabled) {{
         const t = project(target, view, transform);
         ctx.fillStyle = '#ff5d4d';
         ctx.beginPath();
-        ctx.arc(t.x, t.y, 9, 0, Math.PI * 2);
+        ctx.arc(t.x, t.y, 12, 0, Math.PI * 2);
         ctx.fill();
       }}
 
@@ -3153,7 +3270,7 @@ def feature_menu(
         print("------------------")
         print("[1] Shooter Tools: DOPE / Range Card")
         print("[2] Shooter Tools: Reverse Calculation")
-        print("[3] Batch Analysis: Full Simulation")
+        print("[3] Batch Analysis: Full Simulation (run again)")
         print("[4] Visuals & Export")
         print("[5] Comparison")
         print("[6] Uncertainty / Monte Carlo")
@@ -3165,7 +3282,7 @@ def feature_menu(
         elif choice == "2":
             run_reverse_calculation_mode(projectile, env, rifle, optic, launch, config)
         elif choice == "3":
-            maybe_run_full_simulation(projectile, caliber_name, env, launch, result)
+            maybe_run_full_simulation(projectile, caliber_name, env, launch, result, ask_confirmation=False)
         elif choice == "4":
             animate = input("Play trajectory animation? (yes/no) [yes]: ").strip().lower()
             if animate in {"", "yes"}:
@@ -3192,10 +3309,12 @@ def maybe_run_full_simulation(
     env: Environment,
     launch: Launch,
     single_result: SimulationResult,
+    ask_confirmation: bool = True,
 ) -> None:
-    choice = input("\nRun full simulation? (yes/no) [no]: ").strip().lower()
-    if choice != "yes":
-        return
+    if ask_confirmation:
+        choice = input("\nRun full simulation? (yes/no) [no]: ").strip().lower()
+        if choice != "yes":
+            return
 
     if not single_result.trajectory:
         print("Full simulation requires trajectory recording. Re-run with trajectory recording enabled.")
@@ -3254,6 +3373,7 @@ def main() -> None:
                     print(f"- {warning}")
             config = prompt_solver()
             result = simulate(projectile, env, launch, config)
+            maybe_run_full_simulation(projectile, caliber_name, env, launch, result, ask_confirmation=True)
             feature_menu(projectile, caliber_name, env, rifle, optic, launch, config, result)
 
         again = input("\nRun another shot? (yes/no) [no]: ").strip().lower()
